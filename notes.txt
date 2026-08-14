@@ -1,0 +1,27 @@
+CORS
+__________________________________
+
+this allows resource sharing between different sources
+- used to allow communication between allowed interfaces only
+- app.use(cors()) ... allows request from all origins
+-  app.use(cors({
+    origin : <mention origin>
+}))
+
+
+HELMET
+__________________________________
+
+this protects backend from certain http exploits
+- app.use(helmet());
+
+Morgan
+__________________________________
+ 
+this is useful in developement phase only as it gives status like ..  GET /api/v1/products 200 15.234 ms
+-- app.use(morgan("dev"));
+
+
+app.use(express.urlencoded({ extended: true })); 
+-- this is used to include urlencoded body in req.body 
+-- without this the body odes not include body with urlencoded format info like form returns
