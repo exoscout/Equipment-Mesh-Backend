@@ -12,10 +12,6 @@ app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); 
 
-app.use((err, res,req, next) => {
-    console.error(err.stack);
-    res.status(500).send('Something went wrong!');
-});
 
 //routes
 const userRoutes = require("./routes/user.routes");
@@ -25,6 +21,17 @@ app.get('/', (req, res) => {
     console.log('Received a request to the root route');
     res.redirect('/api');
 });
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+
+    res.status(err.statusCode || 500).json({
+        success: false,
+        message: err.message || 'Something went wrong!'
+    });
+});
+
+
 
 
 
