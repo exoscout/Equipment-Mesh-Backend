@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
-const morgan = require("morgan");d
+const morgan = require("morgan");
 
 const app = express();
 
@@ -15,11 +15,18 @@ app.use(express.urlencoded({ extended: true }));
 
 //routes
 const userRoutes = require("./routes/user.routes");
-const authRoutes = require("./routes/auth.routes"); 
+const itemRoutes = require("./routes/item.routes");
+
+app.use('/api/users', userRoutes);
+app.use('/api/items', itemRoutes);
 
 app.get('/', (req, res) => {
     console.log('Received a request to the root route');
     res.redirect('/api');
+});
+
+app.get('/api', (req, res) => {
+    res.status(200).json({ message: 'Equipment Mesh API is running' });
 });
 
 app.use((err, req, res, next) => {
@@ -30,6 +37,8 @@ app.use((err, req, res, next) => {
         message: err.message || 'Something went wrong!'
     });
 });
+
+module.exports = app;
 
 
 

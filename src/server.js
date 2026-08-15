@@ -3,8 +3,8 @@ require("dotenv").config({path: path.join(__dirname, "../.env")});
 
 
 const PORT = process.env.PORT || 3000;
-const app = require("./app");
-const connectDB = require("./config/dataBase");
+const app = require("./index");
+const connectDB = require("./config/database");
 
 
 const startServer = async () => {
