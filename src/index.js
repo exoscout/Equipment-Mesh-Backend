@@ -19,12 +19,22 @@ const itemRoutes = require("./routes/item.routes");
 const requestRoutes = require("./routes/request.routes");
 const negotiationRoutes = require("./routes/negotiation.routes");
 const transactionRoutes = require("./routes/transaction.routes");
+const conditionCardRoutes = require("./routes/conditionCard.routes");
+const reviewRoutes = require("./routes/review.routes");
+const reportDisputeRoutes = require("./routes/reportDispute.routes");
+const adminRoutes = require("./routes/admin.routes");
+const notificationRoutes = require("./routes/notification.routes");
 
 app.use('/api/users', userRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/requests', requestRoutes);
 app.use('/api/negotiations', negotiationRoutes);
 app.use('/api/transactions', transactionRoutes);
+app.use('/api/condition-cards', conditionCardRoutes);
+app.use('/api/reviews', reviewRoutes);
+app.use('/api/issues', reportDisputeRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 app.get('/', (req, res) => {
     console.log('Received a request to the root route');

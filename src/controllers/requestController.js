@@ -1,5 +1,6 @@
 const { Request } = require('../models/request.js');
 const { Item } = require('../models/items.js');
+const { Transaction } = require('../models/transaction.js');
 const { AppError } = require('../utils/appError.js');
 
 const createRequest = async (req, res) => {
@@ -31,6 +32,15 @@ const createRequest = async (req, res) => {
 
     if (item.lister.toString() === req.user.id) {
         throw new AppError('You cannot request your own item', 400);
+    }
+
+    const hasOverdueBorrowing = await Transaction.exists({
+        borrower: req.user.id,
+        status: 'overdue',
+    });
+
+    if (hasOverdueBorrowing) {
+        throw new AppError('You cannot create new requests while you have overdue transactions', 403);
     }
 
     const overlap = await Request.findOne({
