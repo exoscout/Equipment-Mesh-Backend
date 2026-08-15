@@ -17,10 +17,12 @@ app.use(express.urlencoded({ extended: true }));
 const userRoutes = require("./routes/user.routes");
 const itemRoutes = require("./routes/item.routes");
 const requestRoutes = require("./routes/request.routes");
+const negotiationRoutes = require("./routes/negotiation.routes");
 
 app.use('/api/users', userRoutes);
 app.use('/api/items', itemRoutes);
 app.use('/api/requests', requestRoutes);
+app.use('/api/negotiations', negotiationRoutes);
 
 app.get('/', (req, res) => {
     console.log('Received a request to the root route');
