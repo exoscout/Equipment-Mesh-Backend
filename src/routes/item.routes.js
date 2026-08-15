@@ -1,8 +1,10 @@
 const { Router } = require('express');
 const { authenticate } = require('../middlewares/authenticator.js');
-const { createItem, listUserItems, getItemPage, updateItem, unlistItem, relistItem } = require('../controllers/itemController.js');
+const { discoverItems, createItem, listUserItems, getItemPage, updateItem, unlistItem, relistItem } = require('../controllers/itemController.js');
 const router = Router();
 
+router.get('/discover', discoverItems);
+router.get('/', discoverItems);
 router.post('/', authenticate, createItem);
 router.post('/createItem', authenticate, createItem);
 router.get('/my-listings', authenticate, listUserItems);

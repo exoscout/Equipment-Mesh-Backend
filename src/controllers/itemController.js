@@ -1,6 +1,86 @@
 const { Item } = require('../models/items.js');
 const { AppError } = require('../utils/appError.js');
 
+const discoverItems = async (req, res) => {
+    const {
+        search,
+        category,
+        location,
+        condition,
+        minPrice,
+        maxPrice,
+        sortBy,
+        sortOrder,
+        page,
+        limit,
+    } = req.query;
+
+    const query = {
+        status: 'available',
+        archivedAt: null,
+    };
+
+    if (category) {
+        query.category = category;
+    }
+
+    if (condition) {
+        query.condition = condition;
+    }
+
+    if (location) {
+        query.location = { $regex: location, $options: 'i' };
+    }
+
+    if (minPrice !== undefined || maxPrice !== undefined) {
+        query.rentalPrice = {};
+
+        if (minPrice !== undefined) {
+            query.rentalPrice.$gte = Number(minPrice);
+        }
+
+        if (maxPrice !== undefined) {
+            query.rentalPrice.$lte = Number(maxPrice);
+        }
+    }
+
+    if (search) {
+        query.$or = [
+            { name: { $regex: search, $options: 'i' } },
+            { description: { $regex: search, $options: 'i' } },
+            { category: { $regex: search, $options: 'i' } },
+        ];
+    }
+
+    const safePage = Math.max(Number(page) || 1, 1);
+    const safeLimit = Math.min(Math.max(Number(limit) || 10, 1), 50);
+    const skip = (safePage - 1) * safeLimit;
+
+    const allowedSorts = ['createdAt', 'rentalPrice', 'name'];
+    const safeSortBy = allowedSorts.includes(sortBy) ? sortBy : 'createdAt';
+    const safeSortOrder = sortOrder === 'asc' ? 1 : -1;
+    const sort = { [safeSortBy]: safeSortOrder };
+
+    const [items, total] = await Promise.all([
+        Item.find(query)
+            .populate('lister', 'name email')
+            .sort(sort)
+            .skip(skip)
+            .limit(safeLimit),
+        Item.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+        items,
+        pagination: {
+            page: safePage,
+            limit: safeLimit,
+            total,
+            totalPages: Math.ceil(total / safeLimit),
+        },
+    });
+}
+
 const listUserItems = async (req, res) => {
     const userId = req.user.id;
     const items = await Item.find({ lister: userId }).sort({ createdAt: -1 });
@@ -143,6 +223,7 @@ const relistItem = async (req, res) => {
 
 
 module.exports = {
+    discoverItems,
     listUserItems,
     getItemPage,
     createItem,
